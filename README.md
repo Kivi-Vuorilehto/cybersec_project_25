@@ -2,7 +2,7 @@
 A small webapp created with multiple easily exploitable vulnerabilities.
 
 ## Specification
-Create a webapp which contains at least 5 different flaws from the OWASP Top 10 list. (In my case I used the 2017 [Top 10 list](https://raw.githubusercontent.com/OWASP/Top10/master/2017/OWASP%20Top%2010-2017%20(en).pdf))
+Create a webapp which contains at least 5 different flaws from the OWASP Top 10 list. (In my case I used the [2017 Top 10 list](https://raw.githubusercontent.com/OWASP/Top10/master/2017/OWASP%20Top%2010-2017%20(en).pdf))
 
 ### I will use the 2017 list which is as follows:
 A1:2017 - Injection
@@ -48,17 +48,17 @@ user2 : user2
 ```
 
 ## Flaws
-### A1:2017 - Injection\
-### A2:2017 - Broken Authentication\
+### A1:2017 - Injection
+### A2:2017 - Broken Authentication
 [Uses](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/103413503cc3a1e8c5cbc258cb30c6dc113f635c/baseproject/settings.py#L77) a custom [session engine](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/baseproject/simplesession.py)
 which generates session-id's very predictably which means that by bruteforcing session-id's we can skip authentication.
 (Idk what to do for this, should I attach the code to get the right session id and then screenshot read data of messages?)
 
-### A3:2017 - Sensitive Data Exposure\
+### A3:2017 - Sensitive Data Exposure
 Using HTTP to transport unencrypted traffic. Additionally using GET requests to transport added messages which makes interception even easier (though browser history even).
 (Attach wireshark screenshot here and get traffic from cookie inspect element)
 
-### A5:2017 - Broken Access Control\
+### A5:2017 - Broken Access Control
 When sending a message, the system only checks if the sender is logged in, not whether the sender given in the input is actually the sender, and thus users can impersonate each other in the chatroom.
 (Two screenshots, one shows the username and address bar paste, the other the effects)
 
