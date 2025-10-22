@@ -17,7 +17,7 @@ def index(request):
 def sendMessage(request):
     # Use GET requet here to allow for easy broken access control hehe (impersonation of other users)
     if request.method == "GET":
-        sender = User.objects.get(username=request.GET.get("username")) # This line is technically the most critical and is the thing which allows one user to impersonate another
+        sender = User.objects.get(username=request.GET.get("username")) # This line is the most critical and is the thing which allows one user to impersonate another
         text = request.GET.get("text")
         time = timezone.now()
         Message.objects.create(sender=sender, text=text, time=time)

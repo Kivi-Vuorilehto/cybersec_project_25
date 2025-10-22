@@ -1,8 +1,8 @@
 # cyberserc_project_25
-A small webapp created with multiple vulnerabilities
+A small webapp created with multiple easily exploitable vulnerabilities.
 
 ## Specification
-Create a webapp which contains at least 5 different flaws from the OWASP Top 10 list.
+Create a webapp which contains at least 5 different flaws from the OWASP Top 10 list. (In my case I used the 2017 [Top 10 list](https://raw.githubusercontent.com/OWASP/Top10/master/2017/OWASP%20Top%2010-2017%20(en).pdf))
 
 ### I will use the 2017 list which is as follows:
 A1:2017 - Injection
@@ -27,8 +27,6 @@ A10:2017 - Insufficient Logging & Monitoring
 
 CSRF can also be used as a vulnerability even though it's not listed.
 
-https://raw.githubusercontent.com/OWASP/Top10/master/2017/OWASP%20Top%2010-2017%20(en).pdf
-
 The application should have fixes to all the flaws included which are provided through commented code.
 
 The code should (almost) always also contain the fix of the flaw. The fix should be commented out. Do not use git branches or versions for fixes. Just provide the commented fixes and the flaws in one version.
@@ -50,9 +48,21 @@ user2 : user2
 ```
 
 ## Flaws
-A1:2017 - Injection\
-A2:2017 - Broken Authentication\
-A3:2017 - Sensitive Data Exposure\
-A5:2017 - Broken Access Control\
-A7:2017 - Cross-Site Scripting (XSS)
+### A1:2017 - Injection\
+### A2:2017 - Broken Authentication\
+[Uses](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/103413503cc3a1e8c5cbc258cb30c6dc113f635c/baseproject/settings.py#L77) a custom [session engine](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/baseproject/simplesession.py)
+which generates session-id's very predictably which means that by bruteforcing session-id's we can skip authentication.
+(Idk what to do for this, should I attach the code to get the right session id and then screenshot read data of messages?)
+
+### A3:2017 - Sensitive Data Exposure\
+Using HTTP to transport unencrypted traffic. Additionally using GET requests to transport added messages which makes interception even easier (though browser history even).
+(Attach wireshark screenshot here and get traffic from cookie inspect element)
+
+### A5:2017 - Broken Access Control\
+When sending a message, the system only checks if the sender is logged in, not whether the sender given in the input is actually the sender, and thus users can impersonate each other in the chatroom.
+(Two screenshots, one shows the username and address bar paste, the other the effects)
+
+### A7:2017 - Cross-Site Scripting (XSS)
+Straight <script> blocks can be sent through the textbox and they are marked as safe as to allow for easy XSS vulnerabilities.
+(Just show paste in box then alert effect on next)
 

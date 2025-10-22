@@ -9,7 +9,7 @@
   <button type="submit">Log Out</button>
 </form>
 
-Welcome {{ user.username }}!
+Welcome {{ user.username }} to the chatboard!
 
 <div id="chat-messages">
   {% for msg in messages %}
@@ -18,10 +18,12 @@ Welcome {{ user.username }}!
       {{ msg.text|safe }} <!-- The '|safe' part designates it as safe and as such it is now very vulnerable to xss -->
       <!-- {{ msg.text|escape }}  would be the correct implementation here-->
       <br>
+
       <small><i>{{ msg.time|date:"j N y,  H:i" }}</i></small> <!-- holy this is looking kinda ugly -->
+
     </p>
   {% empty %}
-    <p style="max-height: 400px; padding: 10px; margin-bottom: 10px;">No messages yet.</p>
+    <p style="max-height: 400px; padding: 10px; margin-bottom: 10px;">No messages? <img src="https://i.imgflip.com/6kfa61.jpg" alt="No messages?" width="24" height="24"></p> 
   {% endfor %}
 </div>
 
