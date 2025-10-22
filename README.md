@@ -44,6 +44,12 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+Users that are added at the beginning are as follows:
+```
+user1 user1
+user2 user2
+```
+
 ## Flaws
 A1:2017 - Injection\
 A2:2017 - Broken Authentication\
