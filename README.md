@@ -39,15 +39,14 @@ In addition, you should add screenshots for each flaw demonstrating the effect o
 Required for setup of this project are [Python 3](https://www.python.org/downloads/) and [Django](https://pypi.org/project/Django/)
 
 ```python
-python manage.py makemigrations
-python manage.py migrate
 python manage.py runserver
 ```
 
 Users that are added at the beginning are as follows:
+Username : Password
 ```
-user1 user1
-user2 user2
+user1 : user1
+user2 : user2
 ```
 
 ## Flaws
@@ -55,4 +54,5 @@ A1:2017 - Injection\
 A2:2017 - Broken Authentication\
 A3:2017 - Sensitive Data Exposure\
 A5:2017 - Broken Access Control\
-A7:2017 - Cross-Site Scripting (XSS)\
+A7:2017 - Cross-Site Scripting (XSS)
+
