@@ -15,20 +15,21 @@ def index(request):
 
 @login_required
 def sendMessage(request):
-    # Use GET requet here to allow for easy broken access control hehe (impersonation of other users)
+
+    # Use GET request here to allow for easy to showcase broken access control hehe (impersonation of other users)
     if request.method == "GET":
-        sender = User.objects.get(username=request.GET.get("username")) # This line is the most critical and is the thing which allows one user to impersonate another
+        sender = User.objects.get(username=request.GET.get("username")) # This line is the most critical and is the thing which allows one user to impersonate another, should be: sender = request.user
         text = request.GET.get("text")
         time = timezone.now()
         Message.objects.create(sender=sender, text=text, time=time)
+        return redirect("/")
 
-
-    # Correct code here
-    # if request.method == "POST":
+    # To change to using POST instead of GET
+    # elif request.method == "POST":
     #     sender = request.user
     #     text = request.POST.get("text")
     #     time = timezone.now()
     #     Message.objects.create(sender=sender, text=text, time=time)
-
-        return redirect("/")
+    #     return redirect("/")
+    
     return HttpResponse(status=204)
