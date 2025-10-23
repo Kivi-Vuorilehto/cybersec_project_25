@@ -69,7 +69,7 @@ The fix to this can be found in [views.py](https://github.com/Kivi-Vuorilehto/cy
 
 
 ### A7:2017 - Cross-Site Scripting (XSS)
-The textarea is completely unsanitised and Javascript can be sent through it to any user who loads it. An [example](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/baseproject/screenshots/xss-before-exploit.png) showcasing that and it's effect 
+The textarea is completely unsanitised and Javascript can be sent through it to any user who loads it. An [example](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/baseproject/screenshots/xss-before-exploit.png) showcasing that and its effect 
 [before](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/baseproject/screenshots/xss-before-effect.png) and 
 [after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/baseproject/screenshots/xss-after.png) fixing it are in screenshots.
 The [fix](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/chatroom/templates/chatroom/index.html#L18) is on L18 of chatroom/templates/chatroom/index.html
