@@ -1,4 +1,4 @@
-# cyberserc_project_25
+# cybersec_project_25
 A small webapp created with multiple easily exploitable vulnerabilities.
 
 ## Specification
