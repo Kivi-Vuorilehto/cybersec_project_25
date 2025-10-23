@@ -73,9 +73,8 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Remove the below line to fix the insecure authentication
+# Remove the below line to fix the insecure authentication. Additionally the existing session ids have to be re-generated.
 SESSION_ENGINE = 'baseproject.simplesession'
-SESSION_COOKIE_SAMESITE = None
 
 
 # Database
