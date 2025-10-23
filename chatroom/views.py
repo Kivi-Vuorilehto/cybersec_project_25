@@ -16,9 +16,9 @@ def index(request):
 @login_required
 def sendMessage(request):
 
-    # Use GET request here to allow for easy to showcase broken access control hehe (impersonation of other users)
+    # Comment out this block and uncomment the block below to switch to using POST.
     if request.method == "GET":
-        sender = User.objects.get(username=request.GET.get("username")) # This line is the most critical and is the thing which allows one user to impersonate another, should be: sender = request.user
+        sender = User.objects.get(username=request.GET.get("username")) # This line is what allows one user to impersonate another, should be: sender = request.user
         text = request.GET.get("text")
         time = timezone.now()
         Message.objects.create(sender=sender, text=text, time=time)

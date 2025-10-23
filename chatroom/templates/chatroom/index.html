@@ -29,10 +29,10 @@ Welcome {{ user.username }} to the chatboard!
 
 <form id="message-form" action="/send" method="GET" style="position: sticky; bottom: 0; border: 4px solid gray; padding: 15px; margin-bottom: 25px; background-color: white; align-items: center; display: flex; gap: 15px;">
 <!-- <form id="message-form" action="{% url 'sendMessage' %}" method="POST" style="position: sticky; bottom: 0; border: 4px solid gray; padding: 15px; margin-bottom: 25px; background-color: white; align-items: center; display: flex; gap: 15px;"> -->
-<!-- comment out the line above and remove the line two lines above to switch to using POST-->
+<!-- comment out the line above and remove the line two lines above to switch to using POST, additionally in views.py uncomment the POST block and comment the GET block-->
   {% csrf_token %}
   <input type="hidden" name="username" value="{{user}}">
-  <!-- comment out the line above to stop the user access control mistake or if you want to use POST -->
+  <!-- comment out the line above to stop the user access control mistake -->
   <textarea type="text" name="text" placeholder="Type a message..." required maxlength="2000" rows="5" style="flex: 1;"></textarea>
   <br>
   <button type="submit">Send</button>
