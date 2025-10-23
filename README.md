@@ -33,7 +33,7 @@ After implementing the [fix](https://github.com/Kivi-Vuorilehto/cyberserc_projec
 [custom session engine](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/baseproject/simplesession.py)
 which generates session-id's very predictably which means that by bruteforcing session-id's we can skip authentication.
 
-This [script](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/baseproject/session_hijack/sessionhijack.py) can be used to demonstrate session hijacking in action with this site. It outputs the HTML data accesssible by the user with that session id. Thus an attacker can for example read all of the messages in the chatroom. Screenshots for 
+This [script](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/session_hijack/sessionhijack.py) can be used to demonstrate session hijacking in action with this site. It outputs the HTML data accesssible by the user with that session id. Thus an attacker can for example read all of the messages in the chatroom. Screenshots for 
 [before](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/sessionhijacking-before.png) and 
 [after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/sessionhijacking-after.png) as well as the 
 [fix](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/baseproject/settings.py#L76) can be found.
