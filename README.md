@@ -47,12 +47,12 @@ To fix the fundamental issue one would have to switch to HTTPS which is not with
 
 
 ### A5:2017 - Broken Access Control
-When sending a message, the system only checks if the sender is logged in, not whether the sender given in the input is actually the sender, and thus users can impersonate each other in the chatroom. The vulnerability being exploited can be seen in the [setup](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access-control-before-exploit.png) and [effect](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access-control-before-effect.png) screenshots.
+When sending a message, the system only checks if the sender is logged in, not whether the sender given in the input is actually the sender, and thus users can impersonate each other in the chatroom. The vulnerability being exploited can be seen in the [setup](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access_control-before-exploit.png) and [effect](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access-control-before-effect.png) screenshots.
 The fix to this can be found in [views.py](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/views.py#L65) and additionally the insecure username field should be removed from [index.html](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L44).
 
 
 ### A7:2017 - Cross-Site Scripting (XSS)
-The textarea is completely unsanitised and Javascript can be sent through it to any user who loads it. An [example](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/baseproject/screenshots/xss-before-exploit.png) showcasing that and its effect 
+The textarea is completely unsanitised and Javascript can be sent through it to any user who loads it. An [example](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-before-exploit.png) showcasing that and its effect 
 [before](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-before-effect.png) and 
 [after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-after.png) fixing it are in screenshots.
 The [fix](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L28) is on L28 of chatroom/templates/chatroom/index.html
