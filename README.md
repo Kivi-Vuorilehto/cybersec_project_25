@@ -1,4 +1,4 @@
-# cybersec_project_25
+# Cybersecurity Base Project I
 A small webapp created with multiple easily exploitable vulnerabilities.
 
 ## Specification
@@ -9,9 +9,13 @@ The code contains a fix to all other listed vulnerabilities except sensitive dat
 ## Project Setup
 Required for setup of this project are [Python 3](https://www.python.org/downloads/) and [Django](https://pypi.org/project/Django/)
 
+To run the project simply run:
+
 ```python
 python manage.py runserver
 ```
+
+The website is hosted at localhost:8000 by default.
 
 Users that are added at the beginning are as follows:
 Username : Password
