@@ -73,7 +73,7 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-
+# Remove the below line to fix the insecure authentication
 SESSION_ENGINE = 'baseproject.simplesession'
 SESSION_COOKIE_SAMESITE = None
 
