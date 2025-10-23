@@ -1,3 +1,5 @@
+# This file was copied from the course material and was used with permission in this project.
+
 import django.contrib.sessions.backends.db as db
 
 class SessionStore(db.SessionStore):

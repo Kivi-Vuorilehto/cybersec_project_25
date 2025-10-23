@@ -9,7 +9,17 @@
   <button type="submit">Log Out</button>
 </form>
 
-Welcome {{ user.username }}!
+Welcome {{ user.username }} to the chatboard!
+
+<form method="POST" action="" style="margin-top: 15px; margin-bottom: 10px;">
+  {% csrf_token %}
+  <input type="text" name="sender" placeholder="Filter message by sender"
+         value="{{ sender_username }}">
+  <button type="submit" style="padding:5px;">Filter</button>
+  {% if sender_username %}
+    <a href="{% url 'index' %}" style="margin-left: 10px;">Clear</a>
+  {% endif %}
+</form>
 
 <div id="chat-messages">
   {% for msg in messages %}
@@ -18,19 +28,24 @@ Welcome {{ user.username }}!
       {{ msg.text|safe }} <!-- The '|safe' part designates it as safe and as such it is now very vulnerable to xss -->
       <!-- {{ msg.text|escape }}  would be the correct implementation here-->
       <br>
-      <small><i>{{ msg.time|date:"j N y,  H:i" }}</i></small> <!-- holy this is looking kinda ugly -->
+
+      <small>{{ msg.time|date:"j N Y,  H:i" }}</small> <!-- holy this is looking kinda ugly -->
+
     </p>
   {% empty %}
-    <p style="max-height: 400px; padding: 10px; margin-bottom: 10px;">No messages yet.</p>
+    <p style="max-height: 400px; padding: 10px; margin-bottom: 10px;">No messages? <img src="https://i.imgflip.com/6kfa61.jpg" alt="No messages?" width="24" height="24"></p> 
   {% endfor %}
 </div>
 
 <form id="message-form" action="/send" method="GET" style="position: sticky; bottom: 0; border: 4px solid gray; padding: 15px; margin-bottom: 25px; background-color: white; align-items: center; display: flex; gap: 15px;">
+<!-- <form id="message-form" action="{% url 'sendMessage' %}" method="POST" style="position: sticky; bottom: 0; border: 4px solid gray; padding: 15px; margin-bottom: 25px; background-color: white; align-items: center; display: flex; gap: 15px;"> -->
+<!-- comment out the line above and remove the line two lines above to switch to using POST, additionally in views.py uncomment the POST block and comment the GET block-->
   {% csrf_token %}
   <input type="hidden" name="username" value="{{user}}">
+  <!-- comment out the insecure line above when fixing user acess vulnerability -->
   <textarea type="text" name="text" placeholder="Type a message..." required maxlength="2000" rows="5" style="flex: 1;"></textarea>
   <br>
-  <button type="submit">Send</button>
+  <button type="submit" style="padding:15px;">Send</button>
 </form>
 
 {% endblock %}
