@@ -19,7 +19,7 @@ python manage.py runserver
 
 The website is hosted at localhost:8000 by default.
 
-Users that are added with "username : password" format at the beginning are:
+Existing users with the "username : password" are:
 
 ```
 user1 : user1
@@ -45,12 +45,13 @@ As an example, the following data can be used as the filter in order to retrieve
 ```
 
 This being shown in action can be found the screenshots folder, under: 
-[injection-before screenshot](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/injection-before.png)
+[injection-before screenshot](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/injection-before.png).
 
-To fix this flaw, follwing the instructions of L24 in chatroom/views.py would suffice. The fix consists of utilizing Django's Object Relational Mapping (ORM) to interact with the database and not insecurely concatenating the data which means that the data is parameterized. With the current newest Django version there is no vulnerability identified in the ORM operations we use.
+To fix this flaw, follwing the instructions of [L24 in chatroom/views.py](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/7f41920ff9556831c987ea9a81fb4e43402ae17c/chatroom/views.py#L24) 
+would suffice. The fix consists of utilizing Django's Object Relational Mapping (ORM) to interact with the database and not insecurely concatenating the data which means that the data is parameterized. With the current newest Django version there is no vulnerability identified in the ORM operations used.
 
 The same exploit attempted results in this after the fix: 
-[injection-after screenshot](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/injection-after.png)
+[injection-after screenshot](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/injection-after.png).
 
 
 ### A2:2017 - Broken Authentication
@@ -69,7 +70,8 @@ This [script](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/
 This being shown in action can be found in the screenshots folder under:
 [sessionhijacking-before](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/sessionhijacking-before.png).
 
-To fix this flaw, one can simply remove L78 in baseproject/settings.py which speicifies the use of the custom session engine, and regenerate currently valid session-ids. This will make the app utilize Django's default session engine which generates secure session-ids which are not brute forceable in any worthwhile timeframe.
+To fix this flaw, one can simply remove [L78 in baseproject/settings.py](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/7f41920ff9556831c987ea9a81fb4e43402ae17c/baseproject/settings.py#L78) 
+which speicifies the use of the custom session engine, and regenerate currently valid session-ids. This will make the app utilize Django's default session engine which generates secure session-ids which are not brute forceable in any worthwhile timeframe.
 
 Effect of the same exploit attempted after the fix:
 [sessionhijacking-after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/sessionhijacking-after.png).
