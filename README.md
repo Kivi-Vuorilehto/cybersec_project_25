@@ -9,7 +9,7 @@ The code contains a fix to all other listed vulnerabilities except sensitive dat
 ## Project Setup
 Required for setup of this project are [Python 3](https://www.python.org/downloads/) and [Django](https://pypi.org/project/Django/)
 
-If you wish to use the project using HTTPS (read A3), you will also need [django-extensions](https://pypi.org/project/django-extensions/), [Werkzeug](https://pypi.org/project/Werkzeug/) and [pyOpenSSL](https://pypi.org/project/pyOpenSSL/)
+If you wish to use the project using HTTPS ([read A3](https://github.com/Kivi-Vuorilehto/cybersec_project_25?tab=readme-ov-file#a32017---sensitive-data-exposure)), you will also need [django-extensions](https://pypi.org/project/django-extensions/), [Werkzeug](https://pypi.org/project/Werkzeug/) and [pyOpenSSL](https://pypi.org/project/pyOpenSSL/)
 
 To run the project simply run:
 
@@ -19,7 +19,7 @@ python manage.py runserver
 
 The website is hosted at localhost:8000 by default.
 
-Existing users with the "username : password" are:
+Existing users with the format "username : password" are:
 
 ```
 user1 : user1
@@ -37,7 +37,7 @@ Injection is the process of supplying hostile data to any kind of interpreter. T
 
 In this case, the filter feature which allows a user to filter shown messages in the chatroom to a single user is vulnerable to injection. This is because the data sent through the filter field is directly concatenated to an SQL query without parameterization. 
 
-The flaw originates from L42 in chatroom/views.py, where an execute is run with improper protections.
+The flaw originates from [L42 in chatroom/views.py](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/17c0d5ab8512f1f2b4076c4513dbef274202a006/chatroom/views.py#L42), where an execute is run with improper protections.
 
 As an example, the following data can be used as the filter in order to retrieve the admin username and password hash:
 ```sql
@@ -88,7 +88,8 @@ To solve this issue, we would have to switch to using HTTPS instead of HTTP. In 
 
 The fix is having a certificate authority provide you with an SSL certificate, which we can use to enable HTTPS transmission for all data. To simulate this in development, I have generated my own local certificate which I have **not** shared in this repo. If you want to simulate a HTTPS connection yourself, you can follow the instructions found on this [answer](https://stackoverflow.com/a/77708864) to generate your own.
 
-This fix would not work as is in deployment, however the same principle applies and the steps to enable it in deployment in the code are on L41 in baseproject/settings.py.
+This fix would not work as is in deployment, however the same principle applies and the steps to enable it in deployment in the code are on 
+[L41 in baseproject/settings.py](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/17c0d5ab8512f1f2b4076c4513dbef274202a006/baseproject/settings.py#L41).
 
 Afterwards the server can be run using a locally generated SSL certificate using:
 
