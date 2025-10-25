@@ -1,5 +1,5 @@
 # Cybersecurity Base Project I
-A small webapp created with multiple easily exploitable vulnerabilities.
+A small web application intentionally created with multiple, easily exploitable vulnerabilities for coursework.
 
 ## Specification
 Create a webapp which contains at least 5 different flaws from the OWASP Top 10 list. (In my case I used the [2017 Top 10 list](https://raw.githubusercontent.com/OWASP/Top10/master/2017/OWASP%20Top%2010-2017%20(en).pdf))
@@ -9,6 +9,8 @@ The code contains a fix to all other listed vulnerabilities except sensitive dat
 ## Project Setup
 Required for setup of this project are [Python 3](https://www.python.org/downloads/) and [Django](https://pypi.org/project/Django/)
 
+If you wish to use the project using HTTPS (read A3), you will also need [django-extensions](https://pypi.org/project/django-extensions/), [Werkzeug](https://pypi.org/project/Werkzeug/) and [pyOpenSSL](https://pypi.org/project/pyOpenSSL/)
+
 To run the project simply run:
 
 ```python
@@ -17,46 +19,116 @@ python manage.py runserver
 
 The website is hosted at localhost:8000 by default.
 
-Users that are added at the beginning are as follows:
-Username : Password
+Users that are added with "username : password" format at the beginning are:
+
 ```
 user1 : user1
 user2 : user2
 ```
 
+There is also an admin account added by default if you wish to try the SQL injection exploit provided:
+```
+admin : admin
+```
+
 ## Flaws
 ### A1:2017 - Injection
+Injection is the process of supplying hostile data to any kind of interpreter. This can result in data breaches, data loss or denial of access.
 
-As an example, with the filter ```' and 1 = 0 UNION SELECT a.password, a.username, email FROM auth_user AS a WHERE a.is_superuser = 1 and a.username LIKE '%``` we can retrieve the salted admin credentials. You could modify this to retrieve any data stored inside the database file. The results of this filter can be seen in the 
-[injection-before screenshot](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/injection-before.png). 
-After implementing the [fix](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/views.py#L24), the results of it without the vulnerability can be seen in the 
-[injection-after screenshot](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/injection-after.png).
+In this case, the filter feature which allows a user to filter shown messages in the chatroom to a single user is vulnerable to injection. This is because the data sent through the filter field is directly concatenated to an SQL query without parameterization. 
+
+The flaw originates from L42 in chatroom/views.py, where an execute is run with improper protections.
+
+As an example, the following data can be used as the filter in order to retrieve the admin username and password hash:
+```sql
+' and 1 = 0 UNION SELECT a.password, a.username, email FROM auth_user AS a WHERE a.is_superuser = 1 and a.username LIKE '%
+```
+
+This being shown in action can be found the screenshots folder, under: 
+[injection-before screenshot](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/injection-before.png)
+
+To fix this flaw, follwing the instructions of L24 in chatroom/views.py would suffice. The fix consists of utilizing Django's Object Relational Mapping (ORM) to interact with the database and not insecurely concatenating the data which means that the data is parameterized. With the current newest Django version there is no vulnerability identified in the ORM operations we use.
+
+The same exploit attempted results in this after the fix: 
+[injection-after screenshot](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/injection-after.png)
+
 
 ### A2:2017 - Broken Authentication
-[Uses](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/baseproject/settings.py#L77) a 
-[custom session engine](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/baseproject/simplesession.py)
-which generates session-id's very predictably which means that by bruteforcing session-id's we can skip authentication.
+Broken authentication refers to cases where authentication is not securely implemented and allows an attacker to gain unauthorized access. This can result in data breaches, data loss, denial of access, identity theft or even complete system takeover. 
 
-This [script](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/session_hijack/sessionhijack.py) can be used to demonstrate session hijacking in action with this site. It outputs the HTML data accesssible by the user with that session id. Thus an attacker can for example read all of the messages in the chatroom. Screenshots for 
-[before](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/sessionhijacking-before.png) and 
-[after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/sessionhijacking-after.png) as well as the 
-[fix](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/baseproject/settings.py#L76) can be found.
+In this case, the app is vulnerable due to a [custom session engine](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/baseproject/simplesession.py). It assigns session ids in a predictable manner in the following format:
+```
+session-0, session-1, session-2 ...
+```
+This allows an attacker to brute force session-ids to find an unexpired session which can be used to access the chatroom with a user's account. 
+
+Additionally the app does not employ Multi-Factor Authentication (MFA). This also leaves it vulnerable to credential stuffing. The fix for this is out of scope for the project, but could be implemented through the use of an authentication app, email or sms. Additionally rate limiting could be introduced to make brute forcing accounts harder.
+
+This [script](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/session_hijack/sessionhijack.py) can be used to demonstrate session hijacking in action with this site. It outputs the HTML data accesssible by the user with that session id. 
+
+This being shown in action can be found in the screenshots folder under:
+[sessionhijacking-before](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/sessionhijacking-before.png).
+
+To fix this flaw, one can simply remove L78 in baseproject/settings.py which speicifies the use of the custom session engine, and regenerate currently valid session-ids. This will make the app utilize Django's default session engine which generates secure session-ids which are not brute forceable in any worthwhile timeframe.
+
+Effect of the same exploit attempted after the fix:
+[sessionhijacking-after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/sessionhijacking-after.png).
 
 
 ### A3:2017 - Sensitive Data Exposure
-Using HTTP to transport unencrypted traffic. Additionally using GET requests to transport added messages which makes interception even easier (though browser history even).
-A [screenshot](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/insecure_data_transmission.png) highlighting this is provided.
-To fix the fundamental issue one would have to switch to HTTPS which is not within the scope of this project. However, a fix is provided to using POST instead of GET in order to prevent the data being extremely easily accessible. It is in two parts, one in [views.py](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/views.py#L63) and the other in 
-[index.html](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L42).
+Sensitive data exposure refers to cases where transmitted sensitive information is inadequately protected and allows an attacker to gain access to it. 
+
+In this case, the app is vulnerable due to all traffic being transmitted with HTTP. This includes usernames and passwords, as well as the messages sent in the chatroom.
+
+A screenshot called [insecure-data-transmission-before](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/insecure-data-transmission-before.png) highlights this.
+
+To solve this issue, we would have to switch to using HTTPS instead of HTTP. In this case I don't believe that there is another solution. 
+
+The fix is having a certificate authority provide you with an SSL certificate, which we can use to enable HTTPS transmission for all data. To simulate this in development, I have generated my own local certificate which I have **not** shared in this repo. If you want to simulate a HTTPS connection yourself, you can follow the instructions found on this [answer](https://stackoverflow.com/a/77708864) to generate your own.
+
+This fix would not work as is in deployment, however the same principle applies and the steps to enable it in deployment in the code are on L41 in baseproject/settings.py.
+
+Afterwards the server can be run using a locally generated SSL certificate using:
+
+```
+python manage.py runserver_plus --cert-file certs/name.pem --key-file certs/name-key.pem
+```
+
+The effect of capturing the packets when using HTTPS can be seen in the screenshot [insecure-data-transmission-after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/insecure-data-transmission-after.png).
+
+
+There is another flaw in the project in terms of sensitive data exposure. It sends the message content a user wants to post [using a GET request](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L40). 
+This means that the data transmitted can be captured from the URL without the need to intercept the packets in a network. 
+A fix is provided for this in 
+[chatroom/views.py L63](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/views.py#L63) and
+[chatroom/templates/chatroom/index.html L42](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L42).
+
+While communications between persons like the conversation in this chatroom is not required to be secure by default, I believe that it should ideally be as secure as possible.
 
 
 ### A5:2017 - Broken Access Control
-When sending a message, the system only checks if the sender is logged in, not whether the sender given in the input is actually the sender, and thus users can impersonate each other in the chatroom. The vulnerability being exploited can be seen in the [setup](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access_control-before-exploit.png) and [effect](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access-control-before-effect.png) screenshots.
-The fix to this can be found in [views.py](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/views.py#L65) and additionally the insecure username field should be removed from [index.html](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L44).
+Broken access control refers to a vulnerability where an attacker can perform actions or access data that they should not be able to with their current privileges. 
+
+In this case, when posting a new message to the chatroom, the app takes the username of the sender from the data submitted with the GET (or POST) request. This means that by submitting a custom request, one logged in user can impersonate another and send messages to the room in their name.
+
+This is possible due to [chatroom/views.py L65](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/views.py#L65), and the field in [chatroom/templates/chatroom/index.html L44](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L44).
+
+The exploit can be seen in action in screenshots called [broken-access_control-before-exploit](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access_control-before-exploit.png) and [broken-access-control-before-effect](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access-control-before-effect.png).
+
+To fix this flaw, follow the instructions commented in [chatroom/views.py L65](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/views.py#L65) and [chatroom/templates/chatroom/index.html L45](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L45).
+
+The previous exploit would simply now send that message content in the logged in user's name.
 
 
 ### A7:2017 - Cross-Site Scripting (XSS)
-The textarea is completely unsanitised and Javascript can be sent through it to any user who loads it. An [example](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-before-exploit.png) showcasing that and its effect 
-[before](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-before-effect.png) and 
-[after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-after.png) fixing it are in screenshots.
-The [fix](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L28) is on L28 of chatroom/templates/chatroom/index.html
+Cross-site scripting refers to a vulnerability where an attacker can inject malicious scripts somewhere where it will be executed by another user.
+
+In this case, the processing to data sent through the text area is flawed, and does not sanitize the input. This means that Javascript can be sent through it, which is stored in the database and loaded on every time a user visits the chatroom.
+
+This is made possible due to the |safe filter on the textarea in [chatroom/templates/chatroom/index.html L28](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L28). This designates the field as exempt from the Django's autoescaping which would prevent this.
+
+The exploit in action can be seen in the screenshots [xss-before-exploit](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-before-exploit.png) and [xss-before-effect](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-before-effect.png).
+
+To fix this vulnerability follow the commented instruction in [chatroom/templates/chatroom/index.html L29](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L29).
+
+The effect of the exploit after the fix can be seen in [xss-after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-after.png).

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'chatroom',
+    #uncomment the text after this: 'django_extensions',
 ]
 
 MIDDLEWARE = [
