@@ -71,7 +71,7 @@ This being shown in action can be found in the screenshots folder under:
 [sessionhijacking-before](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/sessionhijacking-before.png).
 
 To fix this flaw, one can simply remove [L78 in baseproject/settings.py](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/7f41920ff9556831c987ea9a81fb4e43402ae17c/baseproject/settings.py#L78) 
-which speicifies the use of the custom session engine, and regenerate currently valid session-ids. This will make the app utilize Django's default session engine which generates secure session-ids which are not brute forceable in any worthwhile timeframe.
+which specifies the use of the custom session engine, and regenerate currently valid session-ids. This will make the app utilize Django's default session engine which generates secure session-ids which are not brute forceable in any worthwhile timeframe.
 
 Effect of the same exploit attempted after the fix:
 [sessionhijacking-after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/sessionhijacking-after.png).
