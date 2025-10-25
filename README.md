@@ -97,11 +97,11 @@ python manage.py runserver_plus --cert-file certs/name.pem --key-file certs/name
 The effect of capturing the packets when using HTTPS can be seen in the screenshot [insecure-data-transmission-after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/insecure-data-transmission-after.png).
 
 
-There is another flaw in the project in terms of sensitive data exposure. It sends the message content a user wants to post [using a GET request](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L40). 
+There is another flaw in the project in terms of sensitive data exposure. It sends the message content a user wants to post [using a GET request](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L40). 
 This means that the data transmitted can be captured from the URL without the need to intercept the packets in a network. 
 A fix is provided for this in 
-[chatroom/views.py L63](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/views.py#L63) and
-[chatroom/templates/chatroom/index.html L42](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L42).
+[chatroom/views.py L63](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/views.py#L63) and
+[chatroom/templates/chatroom/index.html L42](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L42).
 
 While communications between persons like the conversation in this chatroom is not required to be secure by default, I believe that it should ideally be as secure as possible.
 
@@ -110,12 +110,11 @@ While communications between persons like the conversation in this chatroom is n
 Broken access control refers to a vulnerability where an attacker can perform actions or access data that they should not be able to with their current privileges. 
 
 In this case, when posting a new message to the chatroom, the app takes the username of the sender from the data submitted with the GET (or POST) request. This means that by submitting a custom request, one logged in user can impersonate another and send messages to the room in their name.
-
-This is possible due to [chatroom/views.py L65](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/views.py#L65), and the field in [chatroom/templates/chatroom/index.html L44](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L44).
+This is possible due to [chatroom/views.py L65](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/views.py#L65), and the field in [chatroom/templates/chatroom/index.html L44](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L44).
 
 The exploit can be seen in action in screenshots called [broken-access_control-before-exploit](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access_control-before-exploit.png) and [broken-access-control-before-effect](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access-control-before-effect.png).
 
-To fix this flaw, follow the instructions commented in [chatroom/views.py L65](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/views.py#L65) and [chatroom/templates/chatroom/index.html L45](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L45).
+To fix this flaw, follow the instructions commented in [chatroom/views.py L65](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/views.py#L65) and [chatroom/templates/chatroom/index.html L45](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L45).
 
 The previous exploit would simply now send that message content in the logged in user's name.
 
@@ -125,10 +124,10 @@ Cross-site scripting refers to a vulnerability where an attacker can inject mali
 
 In this case, the processing to data sent through the text area is flawed, and does not sanitize the input. This means that Javascript can be sent through it, which is stored in the database and loaded on every time a user visits the chatroom.
 
-This is made possible due to the |safe filter on the textarea in [chatroom/templates/chatroom/index.html L28](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L28). This designates the field as exempt from the Django's autoescaping which would prevent this.
+This is made possible due to the |safe filter on the textarea in [chatroom/templates/chatroom/index.html L28](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L28). This designates the field as exempt from the Django's autoescaping which would prevent this.
 
 The exploit in action can be seen in the screenshots [xss-before-exploit](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-before-exploit.png) and [xss-before-effect](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-before-effect.png).
 
-To fix this vulnerability follow the commented instruction in [chatroom/templates/chatroom/index.html L29](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/4b0c7becc3cf44c299af844c57e89045d91e4bc8/chatroom/templates/chatroom/index.html#L29).
+To fix this vulnerability follow the commented instruction in [chatroom/templates/chatroom/index.html L29](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L29).
 
 The effect of the exploit after the fix can be seen in [xss-after](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/xss-after.png).
