@@ -11,7 +11,7 @@ from django.db import connection
 
 @login_required
 def index(request):
-    # Secure way or filtering messages and retrievng them
+    # This block is not vulnerable to sql injection. Uncomment this block and comment out the block below to fix the injection vulnerability.
 
     # sender_username = request.POST.get("sender", "")
     # messages = Message.objects.all().order_by('-time')
@@ -21,7 +21,7 @@ def index(request):
     # return render(request, "chatroom/index.html", {"user": request.user, "messages": messages, "sender_username": sender_username})
 
 
-    # Comment everything in this function below this line and switch to above to fix injection vulnerability
+    # Block below is everything below this
 
     cursor = connection.cursor()
     sender_username = request.POST.get("sender", "")
@@ -30,7 +30,6 @@ def index(request):
     class Sender:
         def __init__(self, username):
             self.username = username
-
     class MessageWrapper:
         def __init__(self, sender_username, text, time):
             self.sender = Sender(sender_username)
@@ -45,14 +44,12 @@ def index(request):
         messages = [MessageWrapper(row[0], row[1], [row[2]]) for row in rows] # It doesnt properly display the time but as this point, I do not give a damn, I've been trying to fix it for like 2 hours.
     else:
         messages = Message.objects.order_by('-time')[:250]
-    
-
     return render(request, "chatroom/index.html", {"user": request.user, "messages": messages, "sender_username": sender_username})
 
 
 @login_required
 def sendMessage(request):
-    # This block uses POST instead of GET
+    # This block uses POST instead of GET, uncomment this block and comment out the block below to switch to using POST.
     # if request.method == "POST":
     #     sender = request.user
     #     text = request.POST.get("text")
@@ -60,7 +57,7 @@ def sendMessage(request):
     #     Message.objects.create(sender=sender, text=text, time=time)
     #     return redirect("/")
 
-    # Comment out this block and uncomment the block above to switch to using POST.
+    # Block below
     if request.method == "GET":
         sender = User.objects.get(username=request.GET.get("username")) # This line is what allows one user to impersonate another, should be: sender = request.user
         text = request.GET.get("text")
