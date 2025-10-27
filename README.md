@@ -11,7 +11,7 @@ Required for setup of this project are [Python 3](https://www.python.org/downloa
 
 If you wish to use the project using HTTPS ([read A3](https://github.com/Kivi-Vuorilehto/cybersec_project_25?tab=readme-ov-file#a32017---sensitive-data-exposure)), you will also need [django-extensions](https://pypi.org/project/django-extensions/), [Werkzeug](https://pypi.org/project/Werkzeug/) and [pyOpenSSL](https://pypi.org/project/pyOpenSSL/)
 
-To run the project simply run:
+To start the server simply run:
 
 ```python
 python manage.py runserver

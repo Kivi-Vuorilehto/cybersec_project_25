@@ -40,7 +40,7 @@ def index(request):
     if sender_username:
         # django automatically parameterizes the %s placeholder, so instead of using concatenation using %s would fix the issue. Also using Django's Object Relational Mapping (ORM) function is even safer.
         cursor.execute("SELECT u.username, m.text, m.time AS sender_username FROM chatroom_message AS m JOIN auth_user AS u ON m.sender_id = u.id WHERE u.username LIKE '"+ sender_username +"' ORDER BY m.time DESC LIMIT 250")
-        # The above query can be exploited with:     ' and 1 = 0 UNION SELECT a.password, a.username, email FROM auth_user AS a WHERE a.is_superuser = 1 and a.username LIKE '%       to gain access to the salted admin password and username for example
+        # The above query can be exploited with:     ' and 1 = 0 UNION SELECT a.password, a.username, email FROM auth_user AS a WHERE a.is_superuser = 1 and a.username LIKE '%       to gain access to the hashed admin password and username for example
         rows = cursor.fetchall()
         messages = [MessageWrapper(row[0], row[1], [row[2]]) for row in rows] # It doesnt properly display the time but as this point, I do not give a damn, I've been trying to fix it for like 2 hours.
     else:
