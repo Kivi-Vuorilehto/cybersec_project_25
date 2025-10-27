@@ -37,18 +37,17 @@ Injection is the process of supplying hostile data to any kind of interpreter. T
 
 In this case, the filter feature which allows a user to filter shown messages in the chatroom to a single user is vulnerable to injection. This is because the data sent through the filter field is directly concatenated to an SQL query without parameterization. 
 
-The flaw originates from [L42 in chatroom/views.py](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/17c0d5ab8512f1f2b4076c4513dbef274202a006/chatroom/views.py#L42), where an execute is run with improper protections.
+The flaw originates from [L41 in chatroom/views.py](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/8d7cd041dc53588b0316648e0295e4debf08c23b/chatroom/views.py#L41), where an execute() is run with improper protections.
 
 As an example, the following data can be used as the filter in order to retrieve the admin username and password hash:
-```sql
+```
 ' and 1 = 0 UNION SELECT a.password, a.username, email FROM auth_user AS a WHERE a.is_superuser = 1 and a.username LIKE '%
 ```
 
 This being shown in action can be found the screenshots folder, under: 
 [injection-before screenshot](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/injection-before.png).
 
-To fix this flaw, follwing the instructions of [L24 in chatroom/views.py](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/7f41920ff9556831c987ea9a81fb4e43402ae17c/chatroom/views.py#L24) 
-would suffice. The fix consists of utilizing Django's Object Relational Mapping (ORM) to interact with the database and not insecurely concatenating the data which means that the data is parameterized. With the current newest Django version there is no vulnerability identified in the ORM operations used.
+To fix this flaw, follwing the instructions of [L14 in chatroom/views.py](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/8d7cd041dc53588b0316648e0295e4debf08c23b/chatroom/views.py#L14) would suffice. The fix consists of utilizing Django's Object Relational Mapping (ORM) to interact with the database and not insecurely concatenating the data which means that the data is parameterized. With the current newest Django version there is no vulnerability identified in the ORM operations used.
 
 The same exploit attempted results in this after the fix: 
 [injection-after screenshot](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/injection-after.png).
@@ -103,7 +102,7 @@ The effect of capturing the packets when using HTTPS can be seen in the screensh
 There is another flaw in the project in terms of sensitive data exposure. It sends the message content a user wants to post [using a GET request](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L40). 
 This means that the data transmitted can be captured from the URL without the need to intercept the packets in a network. 
 A fix is provided for this in 
-[chatroom/views.py L63](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/views.py#L63) and
+[chatroom/views.py L52](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/8d7cd041dc53588b0316648e0295e4debf08c23b/chatroom/views.py#L52) and
 [chatroom/templates/chatroom/index.html L42](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L42).
 
 While communications between persons like the conversation in this chatroom is not required to be secure by default, I believe that it should ideally be as secure as possible.
@@ -113,11 +112,11 @@ While communications between persons like the conversation in this chatroom is n
 Broken access control refers to a vulnerability where an attacker can perform actions or access data that they should not be able to with their current privileges. 
 
 In this case, when posting a new message to the chatroom, the app takes the username of the sender from the data submitted with the GET (or POST) request. This means that by submitting a custom request, one logged in user can impersonate another and send messages to the room in their name.
-This is possible due to [chatroom/views.py L65](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/views.py#L65), and the field in [chatroom/templates/chatroom/index.html L44](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L44).
+This is possible due to [chatroom/views.py L62](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/8d7cd041dc53588b0316648e0295e4debf08c23b/chatroom/views.py#L62), and the field in [chatroom/templates/chatroom/index.html L44](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L44).
 
 The exploit can be seen in action in screenshots called [broken-access_control-before-exploit](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access_control-before-exploit.png) and [broken-access-control-before-effect](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/main/screenshots/broken-access-control-before-effect.png).
 
-To fix this flaw, follow the instructions commented in [chatroom/views.py L65](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/views.py#L65) and [chatroom/templates/chatroom/index.html L45](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L45).
+To fix this flaw, follow the instructions commented in [chatroom/views.py L62](https://github.com/Kivi-Vuorilehto/cybersec_project_25/blob/8d7cd041dc53588b0316648e0295e4debf08c23b/chatroom/views.py#L62) and [chatroom/templates/chatroom/index.html L45](https://github.com/Kivi-Vuorilehto/cyberserc_project_25/blob/96ae46a3b36d5f8fb5ad168951aa7a114be64308/chatroom/templates/chatroom/index.html#L45).
 
 The previous exploit would simply now send that message content in the logged in user's name.
 
